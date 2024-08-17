@@ -1,70 +1,75 @@
 <template>
-  <img id="logo" alt="Vue logo" src="./assets/logo.png" />
-  <test msg="My First vue app" mdat="kk" />
+  <h1>Simple Reaction time game!</h1>
 
-  <input type="text" ref="title" />
-  <div class="modalcontainer" v-if="showModal">
-    <ModalView
-      :header="header"
-      :text="text"
-      :theme="theme"
-      @CloseModal="toggleModal"
-    />
-  </div>
-  <button @dblclick="handleClick" @click="toggleModal">Click Me!</button>
+  <button class="btn" :disabled="isPlaying" @click="start">Play !</button>
+
+  <TargetBlock v-if="isPlaying" :delay="delay" @gameEnd="gameEnd" />
+
+  <GameResult v-if="showResults" :score="score" />
 </template>
 
 <script>
-import test from "./components/test.vue";
-import ModalView from "./components/ModalView.vue";
+import TargetBlock from "./components/TargetBlock.vue";
+import GameResult from "./components/GameResult.vue";
 
 export default {
   name: "App",
-  components: {
-    test,
-    ModalView,
-  },
+  components: { TargetBlock, GameResult },
   data() {
     return {
-      vis: "hidden",
-      header: "Sales Hedader",
-      text: "This is the text",
-      theme: "sales",
-      showModal: false,
+      isPlaying: false,
+      delay: 2000,
+      score: 0,
+      showResults: false,
     };
   },
   methods: {
-    handleClick() {
-      console.log(this.$refs);
-      console.log(this.$refs.title.focus());
+    start() {
+      this.delay = 2000 + Math.random() * 5000;
+      this.isPlaying = true;
+      this.showResults = false;
     },
-    toggleModal() {
-      this.showModal = !this.showModal;
+    gameEnd(reactionTime) {
+      this.score = reactionTime;
+      this.isPlaying = false;
+      this.showResults = true;
     },
   },
 };
 </script>
 
 <style>
-#app {
-  border: 25px solid black;
+#app,
+.modals {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  color: #d3c1af;
 }
 #logo {
   max-width: 50px;
   margin: auto;
 }
-.modalcontainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.btn {
+  background-color: #04aa6d; /* Green */
+  border: 1px solid green;
+  border-radius: 8px;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  transition-duration: 0.4s;
+}
+.btn:hover {
+  background-color: #04aa6dc4;
+  box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24),
+    0 17px 50px 0 rgba(0, 0, 0, 0.19);
+}
+.btn:disabled {
+  background-color: #037c50;
+  cursor: not-allowed;
 }
 </style>
